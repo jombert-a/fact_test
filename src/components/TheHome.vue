@@ -69,6 +69,7 @@ export default {
       testArr: [],
       selected: [],
       fixedState: [[]],
+      currentIndex: 0
     }
   },
 
@@ -134,11 +135,15 @@ export default {
       return res
     },
 
-    currentIndex() {
-      for (let i = 0; i < this.fixedState.length; i++) {
-        if (JSON.stringify(this.fixedState[i]) === JSON.stringify(this.selected)) return i
-      }
-    },
+    // currentIndex() {
+    //   let index = null
+    //   for (let i = 0; i < this.fixedState.length; i++) {
+    //     if (JSON.stringify(this.fixedState[i]) === JSON.stringify(this.selected)) {
+    //       index = i
+    //     }
+    //   }
+    //   return index
+    // },
 
     isLastInQueue() {
       return this.currentIndex === this.fixedState.length - 1
@@ -146,9 +151,12 @@ export default {
   },
 
   watch: {
-    fixedState(val) {
-      //console.log(val)
-    }
+    // fixedState(val) {
+    //   console.log(val)
+    // },
+    // currentIndex(val) {
+    //   console.log(val, this.fixedState)
+    // }
   },
 
   methods: {
@@ -166,36 +174,57 @@ export default {
     },
 
     newSelectedItem(data) {
+      this.currentIndex += 1
+
+      this.selected.push(data)
+
+      if (this.fixedState.length >= 10) {
+        this.fixedState.shift()
+        this.currentIndex = 10
+      }
+
+      this.fixedState.push([...this.selected])
+
       if (this.currentIndex !== this.fixedState.length - 1) {
         let newArr = []
-        console.log(this.fixedState)
         for (let i = 0; i < this.currentIndex + 1; i ++) {
           newArr.push(this.fixedState[i])
         }
-        console.log(newArr)
         this.fixedState = [...newArr]
       }
-
-      this.selected.push(data)
-      this.fixedState.push([...this.selected])
     },
 
     removeSelectedItem(data) {
       for (let i = 0; i < this.selected.length; i++) {
         if (this.selected[i] === data) {
           this.selected.splice(i, 1)
-          this.fixedState.push([...this.selected])
           break
         }
       }
+
+      if (this.currentIndex !== this.fixedState.length - 1) {
+        this.currentIndex -= 1
+        let newArr = []
+        for (let i = 0; i < this.currentIndex + 1; i++) {
+          newArr.push(this.fixedState[i])
+        }
+        this.fixedState = [...newArr]
+      }
+      else {
+        this.currentIndex += 1
+        this.fixedState.push([...this.selected])
+      }
+      console.log(this.fixedState)
     },
 
     backState() {
-      this.selected = [...this.fixedState[this.currentIndex - 1]]
+      this.currentIndex -= 1
+      this.selected = [...this.fixedState[this.currentIndex]]
     },
 
     forwardState() {
-      this.selected = [...this.fixedState[this.currentIndex + 1]]
+      this.currentIndex += 1
+      this.selected = [...this.fixedState[this.currentIndex]]
     }
   },
 
