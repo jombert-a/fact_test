@@ -135,30 +135,10 @@ export default {
       return res
     },
 
-    // currentIndex() {
-    //   let index = null
-    //   for (let i = 0; i < this.fixedState.length; i++) {
-    //     if (JSON.stringify(this.fixedState[i]) === JSON.stringify(this.selected)) {
-    //       index = i
-    //     }
-    //   }
-    //   return index
-    // },
-
     isLastInQueue() {
       return this.currentIndex === this.fixedState.length - 1
     }
   },
-
-  watch: {
-    // fixedState(val) {
-    //   console.log(val)
-    // },
-    // currentIndex(val) {
-    //   console.log(val, this.fixedState)
-    // }
-  },
-
   methods: {
     countElements(type, arr) {
       let res = 0
@@ -171,6 +151,7 @@ export default {
     resetSelected() {
       this.selected = []
       this.fixedState = [[]]
+      this.currentIndex = 0
     },
 
     newSelectedItem(data) {
@@ -214,7 +195,6 @@ export default {
         this.currentIndex += 1
         this.fixedState.push([...this.selected])
       }
-      console.log(this.fixedState)
     },
 
     backState() {
